@@ -1,9 +1,12 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
+import dynamicImport from 'next/dynamic'
+
+// Dynamically import Navbar and Footer to avoid SSR issues during build
+const Navbar = dynamicImport(() => import('@/components/Navbar'), { ssr: false })
+const Footer = dynamicImport(() => import('@/components/Footer'), { ssr: false })
 
 // Prevent static generation - this page must be rendered at request time
 export const dynamic = 'force-dynamic'
@@ -15,14 +18,17 @@ export default function Error({
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  const [mounted, setMounted] = useState(false)
+
   useEffect(() => {
     // Log the error to an error reporting service
     console.error('Application error:', error)
+    setMounted(true)
   }, [error])
 
   return (
     <>
-      <Navbar />
+      {mounted && <Navbar />}
       <div style={{
         minHeight: '60vh',
         display: 'flex',
@@ -95,7 +101,7 @@ export default function Error({
           </Link>
         </div>
       </div>
-      <Footer />
+      {mounted && <Footer />}
     </>
   )
 }

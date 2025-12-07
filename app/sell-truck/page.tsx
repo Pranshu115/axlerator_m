@@ -32,6 +32,9 @@ type SellFormState = {
 type PhotoPreview = {
   file: File
   preview: string
+  supabaseUrl?: string // Supabase Storage URL after upload
+  uploading?: boolean // Upload status
+  uploadError?: string // Upload error message
 }
 
 const LEGACY_ESTIMATOR_ENABLED = true
@@ -1028,7 +1031,25 @@ export default function SellTruckPage() {
     })
   }
 
-  const handlePhotoUpload = (event: ChangeEvent<HTMLInputElement>) => {
+  const uploadImageToSupabase = async (file: File): Promise<string> => {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const response = await fetch('/api/upload-image', {
+      method: 'POST',
+      body: formData
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Upload failed' }))
+      throw new Error(error.error || 'Failed to upload image')
+    }
+
+    const data = await response.json()
+    return data.url
+  }
+
+  const handlePhotoUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files ? Array.from(event.target.files) : []
     if (!files.length) return
 
@@ -1058,37 +1079,69 @@ export default function SellTruckPage() {
       return
     }
 
-    // Use FileReader to create data URLs (more reliable than blob URLs)
-    validFiles.forEach(file => {
-      const reader = new FileReader()
-      
-      reader.onload = (e) => {
-        const dataUrl = e.target?.result as string
-        if (dataUrl) {
-          setPhotoPreviews(prev => {
-            // Check if we've reached the limit
-            if (prev.length >= MAX_TRUCK_PHOTOS) {
-              alert(`You can only upload up to ${MAX_TRUCK_PHOTOS} photos.`)
-              return prev
-            }
-            
-            // Check if this file is already in the previews
-            const exists = prev.some(p => p.file.name === file.name && p.file.size === file.size)
-            if (exists) {
-              return prev
-            }
-            
-            return [...prev, { file, preview: dataUrl }]
-          })
+    // Process each file: create preview and upload to Supabase
+    validFiles.forEach(async (file) => {
+      // Check if we've reached the limit
+      setPhotoPreviews(prev => {
+        if (prev.length >= MAX_TRUCK_PHOTOS) {
+          alert(`You can only upload up to ${MAX_TRUCK_PHOTOS} photos.`)
+          return prev
         }
-      }
-      
-      reader.onerror = () => {
-        console.error('Failed to read file:', file.name)
-        alert(`Failed to load ${file.name}. Please try again.`)
-      }
-      
-      reader.readAsDataURL(file)
+        
+        // Check if this file is already in the previews
+        const exists = prev.some(p => p.file.name === file.name && p.file.size === file.size)
+        if (exists) {
+          return prev
+        }
+        
+        // Create preview first
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          const dataUrl = e.target?.result as string
+          if (dataUrl) {
+            setPhotoPreviews(prevPreviews => {
+              const newPreview: PhotoPreview = {
+                file,
+                preview: dataUrl,
+                uploading: true,
+                uploadError: undefined
+              }
+              return [...prevPreviews, newPreview]
+            })
+
+            // Upload to Supabase
+            uploadImageToSupabase(file)
+              .then(supabaseUrl => {
+                setPhotoPreviews(prevPreviews => {
+                  return prevPreviews.map(p => 
+                    p.file === file 
+                      ? { ...p, supabaseUrl, uploading: false, uploadError: undefined }
+                      : p
+                  )
+                })
+              })
+              .catch(error => {
+                console.error('Upload error:', error)
+                setPhotoPreviews(prevPreviews => {
+                  return prevPreviews.map(p => 
+                    p.file === file 
+                      ? { ...p, uploading: false, uploadError: error.message }
+                      : p
+                  )
+                })
+                alert(`Failed to upload ${file.name}: ${error.message}`)
+              })
+          }
+        }
+        
+        reader.onerror = () => {
+          console.error('Failed to read file:', file.name)
+          alert(`Failed to load ${file.name}. Please try again.`)
+        }
+        
+        reader.readAsDataURL(file)
+        return prev
+      })
     })
 
     if (event.target) {
@@ -1144,7 +1197,10 @@ export default function SellTruckPage() {
   const buildSubmissionPayload = () => {
     const yearFromStepper = formData.year ? parseInt(String(formData.year), 10) : NaN
     const kilometers = parseKilometersValue(sellForm.kilometers || formData.kmDriven)
-    const images = photoPreviews.map(photo => photo.file.name || photo.preview).filter(Boolean)
+    // Use Supabase URLs if available, otherwise fall back to preview (for backwards compatibility)
+    const images = photoPreviews
+      .map(photo => photo.supabaseUrl || photo.preview)
+      .filter(Boolean)
     const cityFromRto = sellForm.rtoState ? sellForm.rtoState.split(' (')[0] : null
 
     return {
@@ -2153,7 +2209,7 @@ export default function SellTruckPage() {
                           <div className="image-preview-card" key={`photo-${index}-${photo.file.name}-${photo.preview}`}>
                             <div className="image-preview-item">
                               <Image 
-                                src={photo.preview} 
+                                src={photo.supabaseUrl || photo.preview} 
                                 alt={`Truck photo ${index + 1}`}
                                 className="preview-image"
                                 width={200}
@@ -2161,12 +2217,24 @@ export default function SellTruckPage() {
                                 unoptimized
                               />
                               <div className="image-number-badge">{index + 1}</div>
+                              {photo.uploading && (
+                                <div className="upload-status-overlay">
+                                  <div className="upload-spinner"></div>
+                                  <span>Uploading...</span>
+                                </div>
+                              )}
+                              {photo.uploadError && (
+                                <div className="upload-error-overlay">
+                                  <span>⚠️ Upload failed</span>
+                                </div>
+                              )}
                               <button
                                 type="button"
                                 className="remove-image-btn"
                                 aria-label={`Remove photo ${index + 1}`}
                                 onClick={() => handleRemovePhoto(index)}
                                 title="Remove this photo"
+                                disabled={photo.uploading}
                               >
                                 ×
                               </button>
@@ -2179,6 +2247,7 @@ export default function SellTruckPage() {
                               </p>
                               <p className="image-file-size">
                                 {(photo.file.size / 1024 / 1024).toFixed(2)} MB
+                                {photo.supabaseUrl && ' ✓ Uploaded'}
                               </p>
                             </div>
                           </div>

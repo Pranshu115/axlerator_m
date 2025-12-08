@@ -19,6 +19,9 @@ interface Truck {
   image: string
   certified: boolean
   availability?: string
+  features?: string[]
+  color?: string
+  owner?: string
 }
 
 function BrowseTrucksContent() {
@@ -38,7 +41,9 @@ function BrowseTrucksContent() {
     selectedOwner: '',
     selectedAvailability: '',
     transmission: '',
-    location: ''
+    location: '',
+    selectedRTOLocation: '',
+    searchQuery: ''
   })
 
   const fetchTrucks = useCallback(async () => {
@@ -60,7 +65,19 @@ function BrowseTrucksContent() {
       const submissions = submissionsResult.submissions || (Array.isArray(submissionsResult) ? submissionsResult : [])
       
       // Transform certified trucks
-      const formattedCertified: Truck[] = certifiedTrucks.map((truck: any) => ({
+      const formattedCertified: Truck[] = certifiedTrucks.map((truck: any) => {
+        // Parse features if available
+        let features: string[] = []
+        if (truck.features) {
+          try {
+            features = typeof truck.features === 'string' ? JSON.parse(truck.features) : truck.features
+            if (!Array.isArray(features)) features = []
+          } catch (e) {
+            features = []
+          }
+        }
+        
+        return {
         id: truck.id,
         name: `${truck.year} ${truck.manufacturer} ${truck.model}`,
         year: truck.year,
@@ -71,8 +88,12 @@ function BrowseTrucksContent() {
         location: truck.location || truck.city || 'Unknown',
         image: truck.imageUrl,
         certified: truck.certified ?? true,
-        availability: 'In stock'
-      }))
+          availability: 'In stock',
+          features: features,
+          color: truck.color || undefined,
+          owner: truck.ownerNumber ? `${truck.ownerNumber}${truck.ownerNumber === 1 ? 'st' : truck.ownerNumber === 2 ? 'nd' : truck.ownerNumber === 3 ? 'rd' : 'th'} Owner` : undefined
+        }
+      })
       
       // Transform submissions
       const formattedSubmissions: Truck[] = submissions.map((sub: any) => {
@@ -86,6 +107,21 @@ function BrowseTrucksContent() {
           console.warn('Error parsing images for submission:', sub.id)
         }
         
+        // Parse features if available
+        let features: string[] = []
+        if (sub.features) {
+          try {
+            features = typeof sub.features === 'string' ? JSON.parse(sub.features) : sub.features
+            if (!Array.isArray(features)) features = []
+          } catch (e) {
+            features = []
+          }
+        }
+        
+        // Format owner number
+        const ownerNumber = sub.ownerNumber || 1
+        const ownerText = `${ownerNumber}${ownerNumber === 1 ? 'st' : ownerNumber === 2 ? 'nd' : ownerNumber === 3 ? 'rd' : 'th'} Owner`
+        
         return {
           id: sub.id + 10000, // Offset ID to avoid conflicts
           name: `${sub.year} ${sub.manufacturer} ${sub.model}`,
@@ -97,7 +133,10 @@ function BrowseTrucksContent() {
           location: `${sub.city || 'Unknown'}, ${sub.state || 'Unknown'}`,
           image: imageUrl,
           certified: sub.certified ?? false,
-          availability: sub.negotiable ? 'Negotiable' : 'Fixed Price'
+          availability: sub.negotiable ? 'Negotiable' : 'Fixed Price',
+          features: features,
+          color: sub.color || undefined,
+          owner: ownerText
         }
       })
       
@@ -122,6 +161,18 @@ function BrowseTrucksContent() {
     console.log('=== APPLYING FILTERS ===')
     console.log('Total trucks:', trucks.length)
     console.log('Filters:', filters)
+
+    // Search filter - filter by truck name, manufacturer, or model
+    if (filters.searchQuery && filters.searchQuery.trim()) {
+      const query = filters.searchQuery.toLowerCase().trim()
+      filtered = filtered.filter(truck => {
+        const truckName = truck.name.toLowerCase()
+        // Also check manufacturer and model if available
+        const manufacturer = truck.name.split(' ').slice(1).join(' ').toLowerCase() // Extract manufacturer from name
+        return truckName.includes(query) || manufacturer.includes(query)
+      })
+      console.log('After search filter:', filtered.length)
+    }
 
     // Price filter - convert price string to rupees for comparison
     filtered = filtered.filter(truck => {
@@ -148,20 +199,59 @@ function BrowseTrucksContent() {
       console.log('After brand filter:', filtered.length)
     }
 
-    // Year filter - new format (2023 & above, 2021 & above, etc.)
+    // Year filter - range-based format
     if (filters.selectedYear) {
-      const yearThreshold = parseInt(filters.selectedYear.split(' ')[0])
-      filtered = filtered.filter(truck => truck.year >= yearThreshold)
-      console.log('After year filter:', filtered.length, 'threshold:', yearThreshold)
+      const yearRange = filters.selectedYear
+      let minYear = 0
+      let maxYear = new Date().getFullYear()
+      
+      // Parse the range from the selected option
+      if (yearRange === 'Before 2009') {
+        minYear = 0
+        maxYear = 2008
+      } else {
+        // Parse range format like "2021 - 2024"
+        const rangeMatch = yearRange.match(/(\d{4})\s*-\s*(\d{4})/)
+        if (rangeMatch) {
+          minYear = parseInt(rangeMatch[1])
+          maxYear = parseInt(rangeMatch[2])
+        }
+      }
+      
+      console.log('Year Filter active! Range:', minYear, '-', maxYear)
+      filtered = filtered.filter(truck => {
+        const passes = truck.year >= minYear && truck.year <= maxYear
+        return passes
+      })
+      console.log('After year filter:', filtered.length)
     }
 
-    // KM Driven filter - new format (10,000 kms or less, etc.)
+    // KM Driven filter - range-based format
     if (filters.selectedKmDriven) {
-      const kmThreshold = parseInt(filters.selectedKmDriven.replace(/[^0-9]/g, ''))
-      console.log('KM Filter active! Threshold:', kmThreshold)
+      const kmRange = filters.selectedKmDriven
+      let minKm = 0
+      let maxKm = Infinity
+      
+      // Parse the range from the selected option
+      if (kmRange === 'Less than 10,000 km') {
+        minKm = 0
+        maxKm = 9999
+      } else if (kmRange === 'More than 2,00,000 km') {
+        minKm = 200000
+        maxKm = Infinity
+      } else {
+        // Parse range format like "10,000 - 25,000 km"
+        const rangeMatch = kmRange.match(/(\d{1,3}(?:,\d{2,3})*)\s*-\s*(\d{1,3}(?:,\d{2,3})*)/)
+        if (rangeMatch) {
+          minKm = parseInt(rangeMatch[1].replace(/,/g, ''))
+          maxKm = parseInt(rangeMatch[2].replace(/,/g, ''))
+        }
+      }
+      
+      console.log('KM Filter active! Range:', minKm, '-', maxKm === Infinity ? '∞' : maxKm)
       filtered = filtered.filter(truck => {
         const km = parseInt(truck.mileage.replace(/[^0-9]/g, ''))
-        const passes = km <= kmThreshold
+        const passes = km >= minKm && km <= maxKm
         console.log(`  ${truck.name}: ${km} km ${passes ? 'PASS' : 'FAIL'}`)
         return passes
       })
@@ -174,6 +264,42 @@ function BrowseTrucksContent() {
         filters.selectedFuelTypes.includes(truck.engine)
       )
       console.log('After fuel type filter:', filtered.length)
+    }
+
+    // Features filter
+    if (filters.selectedFeatures && filters.selectedFeatures.length > 0) {
+      filtered = filtered.filter(truck => {
+        if (!truck.features || truck.features.length === 0) return false
+        // Check if truck has at least one of the selected features
+        return filters.selectedFeatures.some(feature => 
+          truck.features!.some(truckFeature => 
+            truckFeature.toLowerCase().includes(feature.toLowerCase()) ||
+            feature.toLowerCase().includes(truckFeature.toLowerCase())
+          )
+        )
+      })
+      console.log('After features filter:', filtered.length)
+    }
+
+    // Color filter
+    if (filters.selectedColors && filters.selectedColors.length > 0) {
+      filtered = filtered.filter(truck => {
+        if (!truck.color) return false
+        return filters.selectedColors.some(color => 
+          truck.color!.toLowerCase().includes(color.toLowerCase()) ||
+          color.toLowerCase().includes(truck.color!.toLowerCase())
+        )
+      })
+      console.log('After color filter:', filtered.length)
+    }
+
+    // Owner filter
+    if (filters.selectedOwner) {
+      filtered = filtered.filter(truck => {
+        if (!truck.owner) return false
+        return truck.owner === filters.selectedOwner
+      })
+      console.log('After owner filter:', filtered.length)
     }
 
     // Availability filter
@@ -217,17 +343,45 @@ function BrowseTrucksContent() {
       console.log('After location filter:', filtered.length)
     }
 
+    // RTO Location filter
+    if (filters.selectedRTOLocation) {
+      // Extract city name and RTO code from format "City (CODE)"
+      const rtoMatch = filters.selectedRTOLocation.match(/^(.+?)\s*\(([^)]+)\)$/)
+      if (rtoMatch) {
+        const cityName = rtoMatch[1].trim()
+        const rtoCode = rtoMatch[2].trim()
+        
+        filtered = filtered.filter(truck => {
+          const truckLocation = truck.location.toLowerCase()
+          // Match by city name or RTO code
+          return truckLocation.includes(cityName.toLowerCase()) || 
+                 truckLocation.includes(rtoCode.toLowerCase())
+        })
+        console.log('After RTO location filter:', filtered.length)
+      }
+    }
+
     console.log('FINAL FILTERED TRUCKS:', filtered.length)
     console.log('======================')
     setFilteredTrucks(filtered)
   }, [filters, trucks])
 
   useEffect(() => {
-    // Read location from URL query parameters
+    // Read location and search from URL query parameters
     const locationParam = searchParams.get('location')
+    const searchParam = searchParams.get('search')
+    
     if (locationParam) {
       setFilters(prev => ({ ...prev, location: locationParam }))
     }
+    
+    // Store search query in state (will be used in filtering)
+    if (searchParam !== null) {
+      setFilters(prev => ({ ...prev, searchQuery: searchParam }))
+    } else {
+      setFilters(prev => ({ ...prev, searchQuery: '' }))
+    }
+    
     fetchTrucks()
   }, [searchParams, fetchTrucks])
 
@@ -248,7 +402,8 @@ function BrowseTrucksContent() {
       selectedOwner: '',
       selectedAvailability: '',
       transmission: '',
-      location: ''
+      location: '',
+      selectedRTOLocation: ''
     }
 
     return (
@@ -263,7 +418,9 @@ function BrowseTrucksContent() {
       filters.selectedOwner !== '' ||
       filters.selectedAvailability !== '' ||
       filters.transmission !== '' ||
-      filters.location !== ''
+      filters.location !== '' ||
+      filters.selectedRTOLocation !== '' ||
+      filters.searchQuery.trim() !== ''
     )
   }
 
@@ -293,20 +450,28 @@ function BrowseTrucksContent() {
               <p className="browse-trucks-count">Found {filteredTrucks.length} trucks</p>
               {isAnyFilterApplied() && (
                 <button 
-                  onClick={() => setFilters({
-                    priceMin: 50000,
-                    priceMax: 7000000,
-                    selectedBrands: [],
-                    selectedYear: '',
-                    selectedKmDriven: '',
-                    selectedFuelTypes: [],
-                    selectedColors: [],
-                    selectedFeatures: [],
-                    selectedOwner: '',
-                    selectedAvailability: '',
-                    transmission: '',
-                    location: ''
-                  })}
+                  onClick={() => {
+                    setFilters({
+                      priceMin: 50000,
+                      priceMax: 7000000,
+                      selectedBrands: [],
+                      selectedYear: '',
+                      selectedKmDriven: '',
+                      selectedFuelTypes: [],
+                      selectedColors: [],
+                      selectedFeatures: [],
+                      selectedOwner: '',
+                      selectedAvailability: '',
+                      transmission: '',
+                      location: '',
+                      selectedRTOLocation: '',
+                      searchQuery: ''
+                    })
+                    // Clear search from URL
+                    const url = new URL(window.location.href)
+                    url.searchParams.delete('search')
+                    window.history.replaceState({}, '', url.pathname + url.search)
+                  }}
                   className="clear-all-main-btn"
                 >
                   Clear All
@@ -324,20 +489,28 @@ function BrowseTrucksContent() {
             <div className="browse-trucks-empty">
               <p>No trucks found matching your criteria.</p>
               <button 
-                onClick={() => setFilters({
-                  priceMin: 50000,
-                  priceMax: 7000000,
-                  selectedBrands: [],
-                  selectedYear: '',
-                  selectedKmDriven: '',
-                  selectedFuelTypes: [],
-                  selectedColors: [],
-                  selectedFeatures: [],
-                  selectedOwner: '',
-                  selectedAvailability: '',
-                  transmission: '',
-                  location: ''
-                })}
+                onClick={() => {
+                  setFilters({
+                    priceMin: 50000,
+                    priceMax: 7000000,
+                    selectedBrands: [],
+                    selectedYear: '',
+                    selectedKmDriven: '',
+                    selectedFuelTypes: [],
+                    selectedColors: [],
+                    selectedFeatures: [],
+                    selectedOwner: '',
+                    selectedAvailability: '',
+                    transmission: '',
+                    location: '',
+                    selectedRTOLocation: '',
+                    searchQuery: ''
+                  })
+                  // Clear search from URL
+                  const url = new URL(window.location.href)
+                  url.searchParams.delete('search')
+                  window.history.replaceState({}, '', url.pathname + url.search)
+                }}
                 className="reset-filters-btn"
               >
                 Reset Filters

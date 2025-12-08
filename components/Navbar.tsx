@@ -3,8 +3,11 @@
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
 
 export default function Navbar() {
+  const pathname = usePathname()
+  const router = useRouter()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
   const [navbarPadding, setNavbarPadding] = useState('0.8rem 0')
@@ -129,15 +132,57 @@ const searchSuggestions = [
   }, [isMenuOpen])
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value)
+    const query = e.target.value
+    setSearchQuery(query)
     setShowSuggestions(true)
+    
+    // If on browse-trucks page, update URL with search query
+    if (pathname === '/browse-trucks') {
+      const url = new URL(window.location.href)
+      if (query.trim()) {
+        url.searchParams.set('search', query.trim())
+      } else {
+        url.searchParams.delete('search')
+      }
+      router.replace(url.pathname + url.search, { scroll: false })
+    }
+  }
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      if (pathname !== '/browse-trucks') {
+        router.push(`/browse-trucks?search=${encodeURIComponent(searchQuery.trim())}`)
+      }
+    }
+    setShowSuggestions(false)
   }
 
   const handleSuggestionClick = (suggestion: string) => {
     setSearchQuery(suggestion)
     setShowSuggestions(false)
-    // You can add navigation logic here based on the suggestion
+    if (pathname !== '/browse-trucks') {
+      router.push(`/browse-trucks?search=${encodeURIComponent(suggestion)}`)
+    } else {
+      const url = new URL(window.location.href)
+      url.searchParams.set('search', suggestion)
+      router.replace(url.pathname + url.search, { scroll: false })
+    }
   }
+
+  // Sync search query with URL when on browse-trucks page
+  useEffect(() => {
+    if (pathname === '/browse-trucks') {
+      const urlParams = new URLSearchParams(window.location.search)
+      const searchParam = urlParams.get('search')
+      if (searchParam !== null) {
+        setSearchQuery(searchParam)
+      } else if (searchQuery && !searchParam) {
+        // Clear search if URL param is removed
+        setSearchQuery('')
+      }
+    }
+  }, [pathname])
 
   return (
     <nav className="navbar" style={{ padding: navbarPadding }}>
@@ -147,7 +192,7 @@ const searchSuggestions = [
         </Link>
         
         {/* Search Bar */}
-        <div className="nav-search" ref={searchRef}>
+        <form className="nav-search" ref={searchRef} onSubmit={handleSearchSubmit}>
           <input
             type="text"
             placeholder="Search trucks, services..."
@@ -156,10 +201,12 @@ const searchSuggestions = [
             onFocus={() => setShowSuggestions(true)}
             className="search-input"
           />
-          <svg className="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.35-4.35"></path>
-          </svg>
+          <button type="submit" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}>
+            <svg className="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+          </button>
           
           {showSuggestions && searchQuery && filteredSuggestions.length > 0 && (
             <ul className="search-suggestions">
@@ -178,7 +225,7 @@ const searchSuggestions = [
               ))}
             </ul>
           )}
-        </div>
+        </form>
 
         <ul className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
           {/* Buy Trucks - with dropdown */}

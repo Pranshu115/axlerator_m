@@ -37,7 +37,6 @@ function BrowseTrucksContent() {
     selectedKmDriven: '',
     selectedFuelTypes: [] as string[],
     selectedColors: [] as string[],
-    selectedFeatures: [] as string[],
     selectedOwner: '',
     selectedAvailability: '',
     transmission: '',
@@ -107,7 +106,7 @@ function BrowseTrucksContent() {
           availability: 'In stock',
           features: features,
           color: truck.color || undefined,
-          owner: truck.ownerNumber ? `${truck.ownerNumber}${truck.ownerNumber === 1 ? 'st' : truck.ownerNumber === 2 ? 'nd' : truck.ownerNumber === 3 ? 'rd' : 'th'} Owner` : undefined
+          owner: truck.ownerNumber ? `${truck.ownerNumber}${truck.ownerNumber === 1 ? 'st' : truck.ownerNumber === 2 ? 'nd' : truck.ownerNumber === 3 ? 'rd' : 'th'} Owner` : '1st Owner'
         }
       })
       
@@ -282,21 +281,6 @@ function BrowseTrucksContent() {
       console.log('After fuel type filter:', filtered.length)
     }
 
-    // Features filter
-    if (filters.selectedFeatures && filters.selectedFeatures.length > 0) {
-      filtered = filtered.filter(truck => {
-        if (!truck.features || truck.features.length === 0) return false
-        // Check if truck has at least one of the selected features
-        return filters.selectedFeatures.some(feature => 
-          truck.features!.some(truckFeature => 
-            truckFeature.toLowerCase().includes(feature.toLowerCase()) ||
-            feature.toLowerCase().includes(truckFeature.toLowerCase())
-          )
-        )
-      })
-      console.log('After features filter:', filtered.length)
-    }
-
     // Color filter
     if (filters.selectedColors && filters.selectedColors.length > 0) {
       filtered = filtered.filter(truck => {
@@ -414,7 +398,6 @@ function BrowseTrucksContent() {
       selectedKmDriven: '',
       selectedFuelTypes: [],
       selectedColors: [],
-      selectedFeatures: [],
       selectedOwner: '',
       selectedAvailability: '',
       transmission: '',
@@ -430,7 +413,6 @@ function BrowseTrucksContent() {
       filters.selectedKmDriven !== '' ||
       filters.selectedFuelTypes.length > 0 ||
       filters.selectedColors.length > 0 ||
-      filters.selectedFeatures.length > 0 ||
       filters.selectedOwner !== '' ||
       filters.selectedAvailability !== '' ||
       filters.transmission !== '' ||

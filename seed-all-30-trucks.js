@@ -1,5 +1,5 @@
-// Script to seed Supabase database with ALL 30 trucks (Truck 2-31)
-// Arranged by location: Maharashtra → Delhi → Chandigarh
+// Script to seed Supabase database with ALL 30 trucks
+// Updated with actual truck information from the buy truck section
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config({ path: '.env.local' });
 
@@ -13,18 +13,16 @@ if (!supabaseUrl || !supabaseKey) {
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// All 30 trucks arranged by location: Maharashtra → Delhi → Chandigarh
+// All 30 trucks with actual information from the buy truck section
 const trucks = [
-  // ========== MAHARASHTRA (Trucks 2-16) ==========
-  // Truck 2: Eicher PRO 2110 - Maharashtra
   {
-    name: 'Eicher PRO 2110',
+    name: 'Eicher Pro 2110 LCV',
     manufacturer: 'Eicher Motors',
-    model: 'PRO 2110',
+    model: 'Pro 2110 LCV',
     year: 2023,
-    kilometers: 12000,
+    kilometers: 105453,
     horsepower: 110,
-    price: 1650000,
+    price: 1680000,
     image_url: '/trucks/eicher-truck-1.webp',
     subtitle: 'Compact and efficient for city deliveries.',
     certified: true,
@@ -32,15 +30,14 @@ const trucks = [
     city: 'Mumbai',
     state: 'Maharashtra'
   },
-  // Truck 3: Eicher 1059 Xp - Maharashtra
   {
-    name: 'Eicher 1059 Xp',
+    name: 'Eicher Motors 1059 XP',
     manufacturer: 'Eicher Motors',
-    model: '1059 Xp',
-    year: 2022,
-    kilometers: 25000,
+    model: '1059 XP',
+    year: 2018,
+    kilometers: 275034,
     horsepower: 100,
-    price: 1450000,
+    price: 654500,
     image_url: '/trucks/truck3-image-2.png',
     subtitle: 'Reliable and fuel-efficient.',
     certified: true,
@@ -48,15 +45,14 @@ const trucks = [
     city: 'Pune',
     state: 'Maharashtra'
   },
-  // Truck 4: Tata 1512 LPT - Maharashtra
   {
     name: 'Tata 1512 LPT',
     manufacturer: 'Tata Motors',
     model: '1512 LPT',
-    year: 2022,
-    kilometers: 30000,
+    year: 2021,
+    kilometers: 67915,
     horsepower: 150,
-    price: 2250000,
+    price: 209000,
     image_url: '/trucks/truck4-image-1.png',
     subtitle: 'Versatile medium duty truck.',
     certified: true,
@@ -64,15 +60,14 @@ const trucks = [
     city: 'Mumbai',
     state: 'Maharashtra'
   },
-  // Truck 5: Eicher Pro 3015 - Maharashtra
   {
     name: 'Eicher Pro 3015',
     manufacturer: 'Eicher Motors',
     model: 'Pro 3015',
-    year: 2023,
-    kilometers: 10000,
+    year: 2021,
+    kilometers: 108084,
     horsepower: 150,
-    price: 1890000,
+    price: 1150000,
     image_url: '/trucks/truck5-image-2.png',
     subtitle: 'Modern design with excellent fuel economy.',
     certified: true,
@@ -80,15 +75,14 @@ const trucks = [
     city: 'Nagpur',
     state: 'Maharashtra'
   },
-  // Truck 6: Eicher Pro 3019 - Maharashtra
   {
     name: 'Eicher Pro 3019',
     manufacturer: 'Eicher Motors',
     model: 'Pro 3019',
-    year: 2022,
-    kilometers: 28000,
+    year: 2021,
+    kilometers: 75200,
     horsepower: 190,
-    price: 2100000,
+    price: 2200000,
     image_url: '/trucks/truck6-image-2.jpg',
     subtitle: 'Powerful and efficient.',
     certified: true,
@@ -96,15 +90,14 @@ const trucks = [
     city: 'Nashik',
     state: 'Maharashtra'
   },
-  // Truck 7: Tata 3518 - Maharashtra
   {
-    name: 'Tata 3518',
+    name: 'Tata Motors 3518',
     manufacturer: 'Tata Motors',
     model: '3518',
-    year: 2021,
-    kilometers: 45000,
+    year: 2019,
+    kilometers: 82085,
     horsepower: 180,
-    price: 3200000,
+    price: 2805000,
     image_url: '/trucks/truck7-image-2.png',
     subtitle: 'Heavy-duty truck for long hauls.',
     certified: true,
@@ -112,47 +105,44 @@ const trucks = [
     city: 'Thane',
     state: 'Maharashtra'
   },
-  // Truck 8: Eicher PRO 2110 (second one) - Maharashtra
   {
-    name: 'Eicher PRO 2110',
+    name: 'Eicher Pro 2110 XP',
     manufacturer: 'Eicher Motors',
-    model: 'PRO 2110',
-    year: 2022,
-    kilometers: 22000,
+    model: 'Pro 2110 XP',
+    year: 2024,
+    kilometers: 111339,
     horsepower: 110,
-    price: 1580000,
+    price: 1705000,
     image_url: '/trucks/truck8-image-1.png',
-    subtitle: 'Compact and efficient for city deliveries.',
+    subtitle: 'Extended power variant for heavy loads.',
     certified: true,
     location: 'Aurangabad (MH-20)',
     city: 'Aurangabad',
     state: 'Maharashtra'
   },
-  // Truck 9: Tata Truck - Maharashtra
   {
-    name: 'Tata LPT Truck',
+    name: 'Tata Motors Ultra T16',
     manufacturer: 'Tata Motors',
-    model: 'LPT',
-    year: 2021,
-    kilometers: 35000,
-    horsepower: 130,
-    price: 1950000,
+    model: 'Ultra T16',
+    year: 2022,
+    kilometers: 110312,
+    horsepower: 160,
+    price: 1155000,
     image_url: '/trucks/truck9-image-1.png',
-    subtitle: 'Versatile commercial vehicle.',
+    subtitle: 'Ultra-efficient commercial vehicle.',
     certified: true,
     location: 'Solapur (MH-13)',
     city: 'Solapur',
     state: 'Maharashtra'
   },
-  // Truck 10: Tata LPT-1109-HEX2 - Maharashtra
   {
-    name: 'Tata LPT-1109-HEX2',
+    name: 'Tata LPT 1109 HEX 2',
     manufacturer: 'Tata Motors',
-    model: 'LPT-1109-HEX2',
-    year: 2022,
-    kilometers: 20000,
+    model: 'LPT 1109 HEX 2',
+    year: 2014,
+    kilometers: 116432,
     horsepower: 109,
-    price: 1750000,
+    price: 935000,
     image_url: '/trucks/truck10-image-1.jpg',
     subtitle: 'Efficient and reliable.',
     certified: true,
@@ -160,31 +150,29 @@ const trucks = [
     city: 'Kolhapur',
     state: 'Maharashtra'
   },
-  // Truck 11: Eicher Truck - Maharashtra
   {
-    name: 'Eicher Pro Truck',
+    name: 'Eicher Pro 2110 XP',
     manufacturer: 'Eicher Motors',
-    model: 'Pro',
-    year: 2023,
-    kilometers: 15000,
-    horsepower: 120,
-    price: 1720000,
+    model: 'Pro 2110 XP',
+    year: 2019,
+    kilometers: 230825,
+    horsepower: 110,
+    price: 1017500,
     image_url: '/trucks/truck11-image-1.png',
-    subtitle: 'Modern and efficient.',
+    subtitle: 'Extended power for demanding applications.',
     certified: true,
     location: 'Sangli (MH-10)',
     city: 'Sangli',
     state: 'Maharashtra'
   },
-  // Truck 12: Tata LPT-3118 - Maharashtra
   {
-    name: 'Tata LPT-3118',
+    name: 'Tata LPT 3118',
     manufacturer: 'Tata Motors',
-    model: 'LPT-3118',
-    year: 2021,
-    kilometers: 40000,
+    model: 'LPT 3118',
+    year: 2015,
+    kilometers: 232643,
     horsepower: 118,
-    price: 2450000,
+    price: 1595000,
     image_url: '/trucks/truck12-image-1.png',
     subtitle: 'Powerful medium-duty truck.',
     certified: true,
@@ -192,31 +180,29 @@ const trucks = [
     city: 'Satara',
     state: 'Maharashtra'
   },
-  // Truck 13: Eicher Truck - Maharashtra
   {
-    name: 'Eicher Pro 2059',
+    name: 'Eicher Pro 2118',
     manufacturer: 'Eicher Motors',
-    model: 'Pro 2059',
-    year: 2022,
-    kilometers: 30000,
-    horsepower: 59,
-    price: 1250000,
-    image_url: '/trucks/truck13-image-1.png',
-    subtitle: 'Compact and efficient.',
+    model: 'Pro 2118',
+    year: 2024,
+    kilometers: 63529,
+    horsepower: 118,
+    price: 2172500,
+    image_url: '/trucks/truck19-image-1.png',
+    subtitle: 'Powerful and reliable.',
     certified: true,
     location: 'Jalgaon (MH-19)',
     city: 'Jalgaon',
     state: 'Maharashtra'
   },
-  // Truck 14: Ashok Leyland Partner 1114 - Maharashtra
   {
     name: 'Ashok Leyland Partner 1114',
     manufacturer: 'Ashok Leyland',
     model: 'Partner 1114',
-    year: 2021,
-    kilometers: 38000,
+    year: 2023,
+    kilometers: 56021,
     horsepower: 114,
-    price: 2150000,
+    price: 1056000,
     image_url: '/trucks/truck14-image-1.png',
     subtitle: 'Reliable partner for your business.',
     certified: true,
@@ -224,15 +210,14 @@ const trucks = [
     city: 'Akola',
     state: 'Maharashtra'
   },
-  // Truck 15: Ashok Leyland 1615 - Maharashtra
   {
-    name: 'Ashok Leyland 1615',
+    name: 'Ashok Leyland Partner 1615',
     manufacturer: 'Ashok Leyland',
-    model: '1615',
+    model: 'Partner 1615',
     year: 2022,
-    kilometers: 32000,
+    kilometers: 125064,
     horsepower: 115,
-    price: 2350000,
+    price: 1320000,
     image_url: '/trucks/truck15-image-1.png',
     subtitle: 'Powerful and durable.',
     certified: true,
@@ -240,15 +225,14 @@ const trucks = [
     city: 'Amravati',
     state: 'Maharashtra'
   },
-  // Truck 16: Eicher PRO 2114 XP - Maharashtra
   {
-    name: 'Eicher PRO 2114 XP',
+    name: 'Eicher Pro 2114 XP',
     manufacturer: 'Eicher Motors',
-    model: 'PRO 2114 XP',
-    year: 2023,
-    kilometers: 18000,
+    model: 'Pro 2114 XP',
+    year: 2022,
+    kilometers: 120421,
     horsepower: 114,
-    price: 1780000,
+    price: 1475000,
     image_url: '/trucks/truck16-image-1.png',
     subtitle: 'Extended power for heavy loads.',
     certified: true,
@@ -256,17 +240,14 @@ const trucks = [
     city: 'Latur',
     state: 'Maharashtra'
   },
-
-  // ========== DELHI (Trucks 17-25) ==========
-  // Truck 17: Ashok Leyland Ecomet 1214 - Delhi
   {
     name: 'Ashok Leyland Ecomet 1214',
     manufacturer: 'Ashok Leyland',
     model: 'Ecomet 1214',
-    year: 2022,
-    kilometers: 28000,
+    year: 2019,
+    kilometers: 350318,
     horsepower: 114,
-    price: 2280000,
+    price: 1265000,
     image_url: '/trucks/truck17-image-1.png',
     subtitle: 'Eco-friendly and efficient.',
     certified: true,
@@ -274,31 +255,29 @@ const trucks = [
     city: 'Delhi',
     state: 'Delhi'
   },
-  // Truck 18: Eicher Pro 2059VD - Delhi
   {
-    name: 'Eicher Pro 2059VD',
+    name: 'Eicher Pro 2059 XP',
     manufacturer: 'Eicher Motors',
-    model: 'Pro 2059VD',
-    year: 2021,
-    kilometers: 42000,
+    model: 'Pro 2059 XP',
+    year: 2022,
+    kilometers: 95421,
     horsepower: 59,
-    price: 1180000,
-    image_url: '/trucks/truck18-image-1.png',
-    subtitle: 'Versatile and durable.',
+    price: 1455500,
+    image_url: '/trucks/truck13-image-1.png',
+    subtitle: 'Compact and efficient.',
     certified: true,
     location: 'Delhi (DL-02)',
     city: 'Delhi',
     state: 'Delhi'
   },
-  // Truck 19: Eicher Pro 2118 - Delhi
   {
     name: 'Eicher Pro 2118',
     manufacturer: 'Eicher Motors',
     model: 'Pro 2118',
-    year: 2022,
-    kilometers: 35000,
+    year: 2024,
+    kilometers: 45764,
     horsepower: 118,
-    price: 1850000,
+    price: 164000,
     image_url: '/trucks/truck19-image-1.png',
     subtitle: 'Powerful and reliable.',
     certified: true,
@@ -306,15 +285,14 @@ const trucks = [
     city: 'Delhi',
     state: 'Delhi'
   },
-  // Truck 20: Tata 1613 CRi6 - Delhi
   {
-    name: 'Tata 1613 CRi6',
+    name: 'Tata 1613 CRI6',
     manufacturer: 'Tata Motors',
-    model: '1613 CRi6',
-    year: 2023,
-    kilometers: 12000,
+    model: '1613 CRI6',
+    year: 2020,
+    kilometers: 96023,
     horsepower: 113,
-    price: 2050000,
+    price: 525000,
     image_url: '/trucks/truck20-image-1.png',
     subtitle: 'Advanced technology and efficiency.',
     certified: true,
@@ -322,15 +300,14 @@ const trucks = [
     city: 'Delhi',
     state: 'Delhi'
   },
-  // Truck 21: Eicher Pro 2059XP - Delhi
   {
-    name: 'Eicher Pro 2059XP',
+    name: 'Eicher Pro 2059 XP',
     manufacturer: 'Eicher Motors',
-    model: 'Pro 2059XP',
-    year: 2022,
-    kilometers: 30000,
+    model: 'Pro 2059 XP',
+    year: 2024,
+    kilometers: 3111,
     horsepower: 59,
-    price: 1280000,
+    price: 1595000,
     image_url: '/trucks/truck21-image-1.png',
     subtitle: 'Extended power variant.',
     certified: true,
@@ -338,15 +315,14 @@ const trucks = [
     city: 'Delhi',
     state: 'Delhi'
   },
-  // Truck 22: Tata Truck - Delhi
   {
-    name: 'Tata Commercial Truck',
+    name: 'Tata 610',
     manufacturer: 'Tata Motors',
-    model: 'Commercial',
+    model: '610',
     year: 2021,
-    kilometers: 40000,
+    kilometers: 51327,
     horsepower: 100,
-    price: 1650000,
+    price: 1200000,
     image_url: '/trucks/truck22-image-1.png',
     subtitle: 'Versatile commercial vehicle.',
     certified: true,
@@ -354,47 +330,44 @@ const trucks = [
     city: 'Delhi',
     state: 'Delhi'
   },
-  // Truck 23: Ashok Leyland Pick-up - Delhi
   {
-    name: 'Ashok Leyland Pick-up',
+    name: 'Ashok Leyland Ecomet 1212',
     manufacturer: 'Ashok Leyland',
-    model: 'Pick-up',
-    year: 2022,
-    kilometers: 25000,
-    horsepower: 75,
-    price: 950000,
-    image_url: '/trucks/truck23-image-1.png',
-    subtitle: 'Perfect for last-mile delivery.',
+    model: 'Ecomet 1212',
+    year: 2018,
+    kilometers: 196243,
+    horsepower: 112,
+    price: 1000000,
+    image_url: '/trucks/truck17-image-1.png',
+    subtitle: 'Eco-friendly and efficient.',
     certified: true,
     location: 'Delhi (DL-07)',
     city: 'Delhi',
     state: 'Delhi'
   },
-  // Truck 24: Eicher Truck - Delhi
   {
-    name: 'Eicher Pro 3012',
+    name: 'Eicher Pro 3015 XP',
     manufacturer: 'Eicher Motors',
-    model: 'Pro 3012',
-    year: 2021,
-    kilometers: 45000,
-    horsepower: 112,
-    price: 1680000,
-    image_url: '/trucks/truck24-image-1.png',
-    subtitle: 'Reliable workhorse.',
+    model: 'Pro 3015 XP',
+    year: 2023,
+    kilometers: 85017,
+    horsepower: 150,
+    price: 2100000,
+    image_url: '/trucks/truck5-image-2.png',
+    subtitle: 'Extended power with modern features.',
     certified: true,
     location: 'Delhi (DL-08)',
     city: 'Delhi',
     state: 'Delhi'
   },
-  // Truck 25: SML Isuzu Truck - Delhi
   {
-    name: 'SML Isuzu Truck',
+    name: 'SML Isuzu Samrat GS',
     manufacturer: 'SML Isuzu',
-    model: 'Truck',
-    year: 2022,
-    kilometers: 30000,
+    model: 'Samrat GS',
+    year: 2020,
+    kilometers: 16024,
     horsepower: 92,
-    price: 1950000,
+    price: 850000,
     image_url: '/trucks/truck25-image-1.png',
     subtitle: 'Japanese quality and reliability.',
     certified: true,
@@ -402,49 +375,44 @@ const trucks = [
     city: 'Delhi',
     state: 'Delhi'
   },
-
-  // ========== CHANDIGARH (Trucks 26-31) ==========
-  // Truck 26: Eicher 2059 - Chandigarh
   {
-    name: 'Eicher 2059',
+    name: 'Eicher Pro 2059 XP',
     manufacturer: 'Eicher Motors',
-    model: '2059',
+    model: 'Pro 2059 XP',
     year: 2021,
-    kilometers: 52000,
+    kilometers: 52012,
     horsepower: 59,
-    price: 1100000,
-    image_url: '/trucks/truck26-image-1.png',
+    price: 850000,
+    image_url: '/trucks/truck13-image-1.png',
     subtitle: 'Compact and efficient.',
     certified: true,
     location: 'Chandigarh (CH-01)',
     city: 'Chandigarh',
     state: 'Chandigarh'
   },
-  // Truck 27: Eicher 2059 xp - Chandigarh
   {
-    name: 'Eicher 2059 xp',
+    name: 'Eicher Pro 2059 XP',
     manufacturer: 'Eicher Motors',
-    model: '2059 xp',
+    model: 'Pro 2059 XP',
     year: 2022,
-    kilometers: 72000,
+    kilometers: 72154,
     horsepower: 59,
-    price: 1050000,
-    image_url: '/trucks/truck27-image-1.png',
+    price: 900000,
+    image_url: '/trucks/truck21-image-1.png',
     subtitle: 'Extended power variant.',
     certified: true,
     location: 'Chandigarh (CH-01)',
     city: 'Chandigarh',
     state: 'Chandigarh'
   },
-  // Truck 28: Tata 709 LPT - Chandigarh
   {
     name: 'Tata 709 LPT',
     manufacturer: 'Tata Motors',
     model: '709 LPT',
     year: 2021,
-    kilometers: 87000,
+    kilometers: 87421,
     horsepower: 70,
-    price: 850000,
+    price: 825000,
     image_url: '/trucks/truck28-image-1.png',
     subtitle: 'Light commercial vehicle.',
     certified: true,
@@ -452,15 +420,14 @@ const trucks = [
     city: 'Chandigarh',
     state: 'Chandigarh'
   },
-  // Truck 29: Tata 709 G LPT - Chandigarh
   {
     name: 'Tata 709 G LPT',
     manufacturer: 'Tata Motors',
     model: '709 G LPT',
     year: 2022,
-    kilometers: 83900,
+    kilometers: 83921,
     horsepower: 70,
-    price: 920000,
+    price: 1100000,
     image_url: '/trucks/truck29-image-1.png',
     subtitle: 'Upgraded light commercial vehicle.',
     certified: true,
@@ -468,15 +435,14 @@ const trucks = [
     city: 'Chandigarh',
     state: 'Chandigarh'
   },
-  // Truck 30: Tata 1109 G LPT - Chandigarh
   {
     name: 'Tata 1109 G LPT',
     manufacturer: 'Tata Motors',
     model: '1109 G LPT',
     year: 2020,
-    kilometers: 87000,
+    kilometers: 87631,
     horsepower: 109,
-    price: 1450000,
+    price: 1150000,
     image_url: '/trucks/truck30-image-1.png',
     subtitle: 'Reliable medium-duty truck.',
     certified: true,
@@ -484,15 +450,14 @@ const trucks = [
     city: 'Chandigarh',
     state: 'Chandigarh'
   },
-  // Truck 31: Tata 1512 LPT - Chandigarh
   {
     name: 'Tata 1512 LPT',
     manufacturer: 'Tata Motors',
     model: '1512 LPT',
     year: 2022,
-    kilometers: 73000,
+    kilometers: 73542,
     horsepower: 150,
-    price: 2100000,
+    price: 1500000,
     image_url: '/trucks/truck31-image-1.png',
     subtitle: 'Versatile medium duty truck.',
     certified: true,

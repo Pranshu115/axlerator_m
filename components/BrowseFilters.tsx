@@ -14,7 +14,6 @@ export default function BrowseFilters({ onFilterChange, totalCars }: BrowseFilte
   const [isKmDrivenOpen, setIsKmDrivenOpen] = useState(false)
   const [isFuelTypeOpen, setIsFuelTypeOpen] = useState(false)
   const [isColorOpen, setIsColorOpen] = useState(false)
-  const [isFeaturesOpen, setIsFeaturesOpen] = useState(false)
   const [isOwnerOpen, setIsOwnerOpen] = useState(false)
   const [isAvailabilityOpen, setIsAvailabilityOpen] = useState(false)
   const [isRTOLocationOpen, setIsRTOLocationOpen] = useState(false)
@@ -26,7 +25,6 @@ export default function BrowseFilters({ onFilterChange, totalCars }: BrowseFilte
   const [selectedKmDriven, setSelectedKmDriven] = useState('')
   const [selectedFuelTypes, setSelectedFuelTypes] = useState<string[]>([])
   const [selectedColors, setSelectedColors] = useState<string[]>([])
-  const [selectedFeatures, setSelectedFeatures] = useState<string[]>([])
   const [selectedOwner, setSelectedOwner] = useState('')
   const [selectedAvailability, setSelectedAvailability] = useState('')
   const [selectedRTOLocation, setSelectedRTOLocation] = useState('')
@@ -42,13 +40,12 @@ export default function BrowseFilters({ onFilterChange, totalCars }: BrowseFilte
       selectedKmDriven,
       selectedFuelTypes,
       selectedColors,
-      selectedFeatures,
       selectedOwner,
       selectedAvailability,
       selectedRTOLocation
     })
   }, [priceMin, priceMax, selectedBrands, selectedYear, selectedKmDriven, 
-      selectedFuelTypes, selectedColors, selectedFeatures, selectedOwner, selectedAvailability, selectedRTOLocation, onFilterChange])
+      selectedFuelTypes, selectedColors, selectedOwner, selectedAvailability, selectedRTOLocation, onFilterChange])
 
   const handleReset = () => {
     setPriceMin(50000)
@@ -58,7 +55,6 @@ export default function BrowseFilters({ onFilterChange, totalCars }: BrowseFilte
     setSelectedKmDriven('')
     setSelectedFuelTypes([])
     setSelectedColors([])
-    setSelectedFeatures([])
     setSelectedOwner('')
     setSelectedAvailability('')
     setSelectedRTOLocation('')
@@ -71,7 +67,6 @@ export default function BrowseFilters({ onFilterChange, totalCars }: BrowseFilte
       selectedKmDriven: '',
       selectedFuelTypes: [],
       selectedColors: [],
-      selectedFeatures: [],
       selectedOwner: '',
       selectedAvailability: '',
       selectedRTOLocation: ''
@@ -93,12 +88,6 @@ export default function BrowseFilters({ onFilterChange, totalCars }: BrowseFilte
   const toggleColor = (color: string) => {
     setSelectedColors(prev => 
       prev.includes(color) ? prev.filter(c => c !== color) : [...prev, color]
-    )
-  }
-
-  const toggleFeature = (feature: string) => {
-    setSelectedFeatures(prev => 
-      prev.includes(feature) ? prev.filter(f => f !== feature) : [...prev, feature]
     )
   }
 
@@ -327,37 +316,6 @@ export default function BrowseFilters({ onFilterChange, totalCars }: BrowseFilte
                     onChange={() => toggleColor(color)}
                   />
                   <span>{color}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Features */}
-      <div className="filter-section">
-        <button 
-          className="filter-section-header"
-          onClick={() => setIsFeaturesOpen(!isFeaturesOpen)}
-        >
-          <span className="filter-section-title">
-            Features
-          </span>
-          <span className={`filter-arrow ${isFeaturesOpen ? 'open' : ''}`}>
-            {isFeaturesOpen ? '−' : '+'}
-          </span>
-        </button>
-        {isFeaturesOpen && (
-          <div className="filter-section-content">
-            <div className="filter-checkboxes">
-              {['GPS Navigation', 'Air Conditioning', 'Power Steering', 'ABS', 'Airbags', 'Reverse Camera', 'Alloy Wheels', 'Fog Lights', 'Cruise Control', 'Hydraulic Tipper', 'Refrigerated Body', 'Crane Mounted'].map(feature => (
-                <label key={feature} className="filter-checkbox">
-                  <input 
-                    type="checkbox" 
-                    checked={selectedFeatures.includes(feature)}
-                    onChange={() => toggleFeature(feature)}
-                  />
-                  <span>{feature}</span>
                 </label>
               ))}
             </div>

@@ -28,9 +28,7 @@ const trucks = [
       'https://ccmlkidiwxmqxzexoeji.supabase.co/storage/v1/object/public/truck-images/HR_38_W_2162/1766136466662-WhatsApp_Image_2025-12-17_at_6.33.50_PM.jpeg',
     subtitle: 'BS4 • 83k KM • 125 HP',
     certified: true,
-    location: 'HR 38 W 2162',
-    city: 'TBD',
-    state: 'Haryana'
+    location: 'Delhi'
   },
   {
     name: 'HR 38 W 2263',
@@ -44,9 +42,7 @@ const trucks = [
       'https://ccmlkidiwxmqxzexoeji.supabase.co/storage/v1/object/public/truck-images/HR_38_W_2263/1766136482760-WhatsApp_Image_2025-12-17_at_6.44.37_PM.jpeg',
     subtitle: 'Euro4 • 76k KM • 130 HP',
     certified: true,
-    location: 'HR 38 W 2263',
-    city: 'TBD',
-    state: 'Haryana'
+    location: 'Delhi'
   },
   {
     name: 'HR 38 W 3426',
@@ -60,9 +56,7 @@ const trucks = [
       'https://ccmlkidiwxmqxzexoeji.supabase.co/storage/v1/object/public/truck-images/HR_38_W_3426/1766136495219-WhatsApp_Image_2025-12-17_at_6.29.11_PM.jpeg',
     subtitle: 'BS Euro3 • 68k KM • 125 HP',
     certified: true,
-    location: 'HR 38 W 3426',
-    city: 'TBD',
-    state: 'Haryana'
+    location: 'Delhi'
   },
   {
     name: 'HR 55 X 0025',
@@ -76,9 +70,7 @@ const trucks = [
       'https://ccmlkidiwxmqxzexoeji.supabase.co/storage/v1/object/public/truck-images/HR_55_X_0025/1766136509027-WhatsApp_Image_2025-12-17_at_6.39.46_PM_(1).jpeg',
     subtitle: 'BS6 • 87k KM • 180 HP',
     certified: true,
-    location: 'HR 55 X 0025',
-    city: 'TBD',
-    state: 'Haryana'
+    location: 'Delhi'
   },
   {
     name: 'HR 55 X 0253',
@@ -92,9 +84,7 @@ const trucks = [
       'https://ccmlkidiwxmqxzexoeji.supabase.co/storage/v1/object/public/truck-images/HR_55_X_0253/1766136519386-WhatsApp_Image_2025-12-17_at_6.51.02_PM.jpeg',
     subtitle: 'BS4 • 70k KM • 180 HP',
     certified: true,
-    location: 'HR 55 X 0253',
-    city: 'TBD',
-    state: 'Haryana'
+    location: 'Delhi'
   },
   {
     name: 'HR 55 X 1147',
@@ -108,9 +98,7 @@ const trucks = [
       'https://ccmlkidiwxmqxzexoeji.supabase.co/storage/v1/object/public/truck-images/HR_55_X_1147/1766136532086-WhatsApp_Image_2025-12-17_at_6.15.12_PM_(1).jpeg',
     subtitle: 'BS4 • 65k KM • 180 HP',
     certified: true,
-    location: 'HR 55 X 1147',
-    city: 'TBD',
-    state: 'Haryana'
+    location: 'Delhi'
   },
   {
     name: 'HR 55 X 2071',
@@ -124,9 +112,7 @@ const trucks = [
       'https://ccmlkidiwxmqxzexoeji.supabase.co/storage/v1/object/public/truck-images/HR_55_X_2071/1766136554735-WhatsApp_Image_2025-12-17_at_6.01.40_PM_(1).jpeg',
     subtitle: 'BS4 • 80k KM • 180 HP',
     certified: true,
-    location: 'HR 55 X 2071',
-    city: 'TBD',
-    state: 'Haryana'
+    location: 'Delhi'
   },
   {
     name: 'HR 55 X 4498',
@@ -140,9 +126,7 @@ const trucks = [
       'https://ccmlkidiwxmqxzexoeji.supabase.co/storage/v1/object/public/truck-images/HR_55_X_4498/1766136582714-WhatsApp_Image_2025-12-17_at_6.22.57_PM.jpeg',
     subtitle: 'BS4 • 78k KM • 180 HP',
     certified: true,
-    location: 'HR 55 X 4498',
-    city: 'TBD',
-    state: 'Haryana'
+    location: 'Delhi'
   }
 ]
 

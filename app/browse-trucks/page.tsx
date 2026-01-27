@@ -94,7 +94,7 @@ function BrowseTrucksContent() {
         
         return {
         id: truck.id,
-        name: `${truck.year} ${truck.manufacturer} ${truck.model}`,
+        name: truck.name || `${truck.year} ${truck.manufacturer} ${truck.model}`,
         year: truck.year,
         price: `₹${parseFloat(truck.price.toString()).toLocaleString('en-IN')}`,
         mileage: `${truck.kilometers?.toLocaleString() || '0'} km`,
@@ -139,7 +139,7 @@ function BrowseTrucksContent() {
         
         return {
           id: sub.id + 10000, // Offset ID to avoid conflicts
-          name: `${sub.year} ${sub.manufacturer} ${sub.model}`,
+          name: sub.registrationNumber || `${sub.year} ${sub.manufacturer} ${sub.model}`,
           year: sub.year,
           price: `₹${parseFloat(sub.askingPrice.toString()).toLocaleString('en-IN')}`,
           mileage: `${sub.kilometers?.toLocaleString() || '0'} km`,

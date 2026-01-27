@@ -1125,8 +1125,8 @@ export default function TruckDetailsPage() {
         <div className="td-info">
           <div className="td-info-header">
             <div>
-              <h1>{truck.year} {truck.name}</h1>
-              <p className="td-subtitle">{truck.manufacturer} {truck.model} • {truck.horsepower} HP</p>
+              <h1>{truck.name}</h1>
+              <p className="td-subtitle">{truck.year} {truck.manufacturer} {truck.model} • {truck.horsepower} HP</p>
             </div>
             <button className="td-wishlist">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -1257,23 +1257,43 @@ export default function TruckDetailsPage() {
             <div className="td-panel">
               <h2 className="td-panel-title">Vehicle Specifications</h2>
               <div className="td-specs-grid">
-                {[
-                  { label: 'Year', value: truck.year },
-                  { label: 'Brand', value: truck.manufacturer },
-                  { label: 'Model', value: truck.model },
-                  { label: 'Fuel', value: 'Diesel (BS-VI)' },
-                  { label: 'Odometer', value: `${truck.kilometers?.toLocaleString() || '0'} km` },
-                  { label: 'Power', value: `${truck.horsepower} HP` },
-                  { label: 'Gearbox', value: '6-Speed Manual' },
-                  { label: 'RTO', value: 'MH-14 (Pune)' },
-                  { label: 'Insurance', value: 'Valid till Dec 2025' },
-                  { label: 'Ownership', value: 'First Owner' },
-                ].map((spec, idx) => (
-                  <div key={idx} className="td-spec-row">
-                    <span className="td-spec-label">{spec.label}</span>
-                    <span className="td-spec-value">{spec.value}</span>
-                  </div>
-                ))}
+                {(() => {
+                  // Extract emission standard from subtitle
+                  let emissionStandard = 'Diesel (BS-VI)'
+                  if (truck.subtitle) {
+                    const subtitleParts = truck.subtitle.split('•')
+                    if (subtitleParts.length > 0) {
+                      const emissionPart = subtitleParts[0].trim()
+                      if (emissionPart.includes('BS4') || emissionPart.includes('BS 4')) {
+                        emissionStandard = 'Diesel (BS4)'
+                      } else if (emissionPart.includes('BS6') || emissionPart.includes('BS 6')) {
+                        emissionStandard = 'Diesel (BS6)'
+                      } else if (emissionPart.includes('Euro4') || emissionPart.includes('Euro 4')) {
+                        emissionStandard = 'Diesel (Euro4)'
+                      } else if (emissionPart.includes('Euro3') || emissionPart.includes('Euro 3') || emissionPart.includes('BS Euro3')) {
+                        emissionStandard = 'Diesel (BS Euro3)'
+                      }
+                    }
+                  }
+                  
+                  return [
+                    { label: 'Year', value: truck.year },
+                    { label: 'Brand', value: truck.manufacturer },
+                    { label: 'Model', value: truck.model },
+                    { label: 'Fuel', value: emissionStandard },
+                    { label: 'Odometer', value: `${truck.kilometers?.toLocaleString() || '0'} km` },
+                    { label: 'Power', value: `${truck.horsepower} HP` },
+                    { label: 'Gearbox', value: '6-Speed Manual' },
+                    { label: 'RTO', value: 'MH-14 (Pune)' },
+                    { label: 'Insurance', value: 'Valid till Dec 2025' },
+                    { label: 'Ownership', value: 'First Owner' },
+                  ].map((spec, idx) => (
+                    <div key={idx} className="td-spec-row">
+                      <span className="td-spec-label">{spec.label}</span>
+                      <span className="td-spec-value">{spec.value}</span>
+                    </div>
+                  ))
+                })()}
               </div>
 
               <h3 className="td-subsection-title">Load Capacity</h3>

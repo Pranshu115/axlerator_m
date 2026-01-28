@@ -136,8 +136,8 @@ export default function CertifiedTrucks() {
               <TruckCard
                 key={truck.id}
                 badge="Axlerator Certified"
-                name={truck.name}
-                subtitle={truck.subtitle || 'Premium quality truck'}
+                name={truck.manufacturer && truck.model ? `${truck.manufacturer} ${truck.model}` : truck.name}
+                subtitle={truck.year?.toString() || truck.subtitle || 'Premium quality truck'}
                 specs={{
                   year: truck.year.toString(),
                   km: truck.kilometers?.toLocaleString() || '0',

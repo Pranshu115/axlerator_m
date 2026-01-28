@@ -15,6 +15,8 @@ interface Truck {
   location: string
   image: string
   certified: boolean
+  manufacturer?: string
+  model?: string
 }
 
 interface TruckCardProps {
@@ -71,7 +73,7 @@ export default function TruckCard({ truck }: TruckCardProps) {
               </svg>
             </button>
             <div className="truck-card-text-overlay">
-              <h3 className="truck-card-name-overlay">{truck.name}</h3>
+              <h3 className="truck-card-name-overlay">{truck.manufacturer && truck.model ? `${truck.manufacturer} ${truck.model}` : truck.name}</h3>
               <p className="truck-card-subtitle-overlay">{truck.year}</p>
             </div>
           </div>

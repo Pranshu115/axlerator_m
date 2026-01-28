@@ -103,6 +103,8 @@ function BrowseTrucksContent() {
         location: truck.location || truck.city || 'Unknown',
         image: truck.imageUrl,
         certified: truck.certified ?? true,
+        manufacturer: truck.manufacturer,
+        model: truck.model,
           availability: 'In stock',
           features: features,
           color: truck.color || undefined,

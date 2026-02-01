@@ -29,6 +29,8 @@ function BrowseTrucksContent() {
   const [trucks, setTrucks] = useState<Truck[]>([])
   const [filteredTrucks, setFilteredTrucks] = useState<Truck[]>([])
   const [loading, setLoading] = useState(true)
+  const [showFilters, setShowFilters] = useState(false)
+  const [showSort, setShowSort] = useState(false)
   const [filters, setFilters] = useState({
     priceMin: 50000,
     priceMax: 7000000,
@@ -434,11 +436,70 @@ function BrowseTrucksContent() {
       <Navbar />
       
       <div className="browse-trucks-container">
+        {/* Mobile Overlay */}
+        {showFilters && (
+          <div 
+            className="browse-filters-overlay"
+            onClick={() => setShowFilters(false)}
+          />
+        )}
+
+        {/* Mobile Action Buttons */}
+        <div className="browse-action-buttons">
+          <button 
+            className="browse-action-btn sort-btn"
+            onClick={() => setShowSort(!showSort)}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M3 6h18M7 12h10M11 18h2"/>
+            </svg>
+            <span>Sort</span>
+          </button>
+          <button 
+            className="browse-action-btn filters-btn"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+            </svg>
+            <span>Filters</span>
+          </button>
+          {isAnyFilterApplied() && (
+            <button 
+              className="browse-action-btn clear-all-btn"
+              onClick={() => {
+                setFilters({
+                  priceMin: 50000,
+                  priceMax: 7000000,
+                  selectedBrands: [],
+                  selectedYear: '',
+                  selectedKmDriven: '',
+                  selectedFuelTypes: [],
+                  selectedColors: [],
+                  selectedOwner: '',
+                  selectedAvailability: '',
+                  transmission: '',
+                  location: '',
+                  selectedRTOLocation: '',
+                  searchQuery: ''
+                })
+                // Clear search from URL
+                const url = new URL(window.location.href)
+                url.searchParams.delete('search')
+                window.history.replaceState({}, '', url.pathname + url.search)
+              }}
+            >
+              Clear All
+            </button>
+          )}
+        </div>
+
         {/* Left Sidebar - Filters */}
-        <aside className="browse-filters-sidebar">
+        <aside className={`browse-filters-sidebar ${showFilters ? 'mobile-open' : ''}`}>
           <BrowseFilters 
             onFilterChange={handleFilterChange}
             totalCars={filteredTrucks.length}
+            onClose={() => setShowFilters(false)}
           />
         </aside>
 

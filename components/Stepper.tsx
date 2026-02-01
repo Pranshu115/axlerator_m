@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, Children, useRef, useLayoutEffect, useImperativeHandle, forwardRef, HTMLAttributes, ReactNode } from 'react'
+import React, { useState, Children, useRef, useLayoutEffect, useEffect, useImperativeHandle, forwardRef, HTMLAttributes, ReactNode } from 'react'
 import { motion, AnimatePresence, Variants } from 'framer-motion'
 
 export interface StepperRef {
@@ -58,6 +58,8 @@ const Stepper = forwardRef<StepperRef, StepperProps>(({
   const totalSteps = stepsArray.length
   const isCompleted = currentStep > totalSteps
   const isLastStep = currentStep === totalSteps
+  const headerRef = useRef<HTMLDivElement>(null)
+  const stepRefs = useRef<{ [key: number]: HTMLDivElement | null }>({})
 
   const updateStep = (newStep: number) => {
     setCurrentStep(newStep)
@@ -96,6 +98,34 @@ const Stepper = forwardRef<StepperRef, StepperProps>(({
     currentStep
   }))
 
+  // Auto-scroll to active step on mobile
+  useEffect(() => {
+    if (headerRef.current && stepRefs.current[currentStep]) {
+      const stepElement = stepRefs.current[currentStep]
+      const headerElement = headerRef.current
+      
+      if (stepElement && headerElement) {
+        // Only auto-scroll on mobile devices (width <= 768px)
+        if (window.innerWidth <= 768) {
+          const headerRect = headerElement.getBoundingClientRect()
+          const stepRect = stepElement.getBoundingClientRect()
+          const scrollLeft = headerElement.scrollLeft
+          const stepLeft = stepRect.left - headerRect.left + scrollLeft
+          const stepWidth = stepRect.width
+          const headerWidth = headerRect.width
+          
+          // Calculate the position to center the step (or at least make it visible)
+          const targetScroll = stepLeft - (headerWidth / 2) + (stepWidth / 2)
+          
+          headerElement.scrollTo({
+            left: targetScroll,
+            behavior: 'smooth'
+          })
+        }
+      }
+    }
+  }, [currentStep])
+
   const handleComplete = () => {
     setDirection(1)
     updateStep(totalSteps + 1)
@@ -109,7 +139,10 @@ const Stepper = forwardRef<StepperRef, StepperProps>(({
       <div
         className={`stepper-container ${stepCircleContainerClassName}`}
       >
-        <div className={`stepper-header ${stepContainerClassName}`}>
+        <div 
+          ref={headerRef}
+          className={`stepper-header ${stepContainerClassName}`}
+        >
           {stepsArray.map((_, index) => {
             const stepNumber = index + 1
             const isNotLastStep = index < totalSteps - 1
@@ -126,6 +159,11 @@ const Stepper = forwardRef<StepperRef, StepperProps>(({
                   })
                 ) : (
                   <StepIndicator
+                    ref={(el) => {
+                      if (el) {
+                        stepRefs.current[stepNumber] = el
+                      }
+                    }}
                     step={stepNumber}
                     disableStepIndicators={disableStepIndicators}
                     currentStep={currentStep}
@@ -275,7 +313,12 @@ interface StepIndicatorProps {
   disableStepIndicators?: boolean
 }
 
-function StepIndicator({ step, currentStep, onClickStep, disableStepIndicators = false }: StepIndicatorProps) {
+const StepIndicator = forwardRef<HTMLDivElement, StepIndicatorProps>(({ 
+  step, 
+  currentStep, 
+  onClickStep, 
+  disableStepIndicators = false 
+}, ref) => {
   const status = currentStep === step ? 'active' : currentStep < step ? 'inactive' : 'complete'
 
   const handleClick = () => {
@@ -286,6 +329,7 @@ function StepIndicator({ step, currentStep, onClickStep, disableStepIndicators =
 
   return (
     <motion.div
+      ref={ref}
       onClick={handleClick}
       className="stepper-step-indicator"
       animate={status}
@@ -308,7 +352,9 @@ function StepIndicator({ step, currentStep, onClickStep, disableStepIndicators =
       </motion.div>
     </motion.div>
   )
-}
+})
+
+StepIndicator.displayName = 'StepIndicator'
 
 interface StepConnectorProps {
   isComplete: boolean

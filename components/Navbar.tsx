@@ -107,6 +107,14 @@ const searchSuggestions = [
   const handleDropdownClick = (e: React.MouseEvent<HTMLAnchorElement>, dropdown: string) => {
     // On mobile, toggle dropdown instead of navigating
     if (window.innerWidth <= 768) {
+      // Only prevent navigation if there's actually a dropdown menu to show
+      // For "sell-truck", only prevent if SHOW_SELL_LOCATION_LINKS is true
+      if (dropdown === 'sell-truck' && !SHOW_SELL_LOCATION_LINKS) {
+        // No dropdown menu, allow navigation
+        setIsMenuOpen(false)
+        return
+      }
+      // For other dropdowns or when dropdown exists, toggle it
       e.preventDefault()
       e.stopPropagation()
       toggleDropdown(dropdown)
@@ -263,18 +271,28 @@ const searchSuggestions = [
 
           {/* Sell Your Truck - with dropdown */}
           <li 
-            className="nav-item dropdown"
+            className={`nav-item ${SHOW_SELL_LOCATION_LINKS ? 'dropdown' : ''}`}
             onMouseEnter={() => handleMouseEnter('sell-truck')}
             onMouseLeave={handleMouseLeave}
           >
-            <a 
-              href="/sell-truck" 
-              className={`nav-link ${activeSection === 'sell-truck' ? 'active' : ''} ${openDropdown === 'sell-truck' ? 'dropdown-open' : ''}`}
-              onClick={(e) => handleDropdownClick(e, 'sell-truck')}
-            >
-              Sell Your Truck
-              <span className="dropdown-arrow">▼</span>
-            </a>
+            {SHOW_SELL_LOCATION_LINKS ? (
+              <a 
+                href="/sell-truck" 
+                className={`nav-link ${activeSection === 'sell-truck' ? 'active' : ''} ${openDropdown === 'sell-truck' ? 'dropdown-open' : ''}`}
+                onClick={(e) => handleDropdownClick(e, 'sell-truck')}
+              >
+                Sell Your Truck
+                <span className="dropdown-arrow">▼</span>
+              </a>
+            ) : (
+              <Link 
+                href="/sell-truck" 
+                className={`nav-link ${activeSection === 'sell-truck' ? 'active' : ''}`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Sell Your Truck
+              </Link>
+            )}
             {SHOW_SELL_LOCATION_LINKS && (
               <div className={`dropdown-menu dropdown-two-column ${openDropdown === 'sell-truck' ? 'show' : ''}`}>
                 <ul className="dropdown-column">

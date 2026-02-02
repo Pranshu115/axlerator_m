@@ -64,8 +64,10 @@ export const truckSubmissionSchema = z.object({
   }),
   ownerNumber: z.number().int().min(1).max(10),
   
-  // Pricing
-  askingPrice: z.number().min(0, 'Asking price must be 0 or above'),
+  // Pricing (5-8 lacs range)
+  askingPrice: z.number()
+    .min(500000, 'Asking price must be at least 5 lacs (₹5,00,000)')
+    .max(800000, 'Asking price must not exceed 8 lacs (₹8,00,000)'),
   negotiable: z.boolean().default(true),
   
   // Location
@@ -89,7 +91,9 @@ export const truckCreateSchema = z.object({
   year: z.number().int().min(1900).max(new Date().getFullYear() + 1),
   kilometers: z.number().int().min(0).max(10000000),
   horsepower: z.number().int().min(0).max(10000),
-  price: z.number().positive('Price must be positive'),
+  price: z.number()
+    .min(500000, 'Price must be at least 5 lacs (₹5,00,000)')
+    .max(800000, 'Price must not exceed 8 lacs (₹8,00,000)'),
   imageUrl: z.string().url('Invalid image URL'),
   subtitle: z.string().max(200).optional().nullable(),
   certified: z.boolean().default(true),
